@@ -1,0 +1,1015 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>No Empty Plates</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap');
+    
+    :root {
+      --primary: #2c6e49;
+      --secondary: #e76f51;
+      --background: #faf3e0;
+      --text: #1d3557;
+      --plate: #ffffff;
+      --shadow: rgba(0, 0, 0, 0.1);
+      --accent: #588157;
+      --light-accent: #a3b18a;
+      --navbar: #264653;
+      --tab-active: #588157;
+      --tab-inactive: #344e41;
+      
+      /* Dark theme */
+      --dark-background: #0f1a20;
+      --dark-text: #f0f0f0;
+      --dark-accent: #f05d5e;
+      --dark-secondary: #ff7f51;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background-color: var(--background);
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      color: var(--text);
+      transition: background-color 2s ease, color 2s ease;
+      overflow-x: hidden;
+    }
+    
+    .dark-theme {
+      background-color: var(--dark-background);
+      color: var(--dark-text);
+    }
+    /* Add these CSS rules to improve text readability in dark mode */
+
+/* Make sure all text in results is readable in dark mode */
+.results.alarming {
+  background-color: #f05d5e;
+  color: white;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+}
+
+.dark-theme .tab-content {
+  background-color: var(--dark-background);
+  color: var(--dark-text);
+  border: 1px solid var(--dark-accent);
+}
+
+.dark-theme .info-section h3 {
+  color: var(--dark-accent);
+}
+
+.dark-theme .fact:before {
+  color: var(--dark-secondary);
+}
+
+.dark-theme .resource-link {
+  color: var(--dark-accent);
+}
+
+.dark-theme .resource-card {
+  background-color: #1a2530;
+}
+
+.dark-theme .resource-card h4 {
+  color: var(--dark-accent);
+}
+
+.dark-theme .donation-card {
+  background-color: #1a2530;
+  color: var(--dark-text);
+}
+
+.dark-theme .tab {
+  color: white;
+}
+
+.dark-theme .close-btn {
+  color: var(--dark-text);
+}
+
+.dark-theme .close-btn:hover {
+  color: var(--dark-accent);
+}
+    .navbar {
+      background-color: var(--navbar);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.8rem 2rem;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+      position: relative;
+      z-index: 1000;
+    }
+    
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .logo-icon {
+      font-size: 1.8rem;
+    }
+    
+    .logo-text {
+      font-family: 'Playfair Display', serif;
+      color: white;
+      font-size: 1.4rem;
+      font-weight: 700;
+    }
+    
+    .tabs {
+      display: flex;
+      gap: 5px;
+    }
+    
+    .tab {
+      padding: 0.7rem 1.2rem;
+      color: white;
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 0.9rem;
+      border-radius: 5px;
+      transition: background-color 0.3s ease;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    
+    .tab:hover {
+      background-color: var(--tab-active);
+    }
+    
+    .tab.active {
+      background-color: var(--tab-active);
+    }
+    
+    .container {
+      width: 100%;
+      max-width: 800px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+      padding: 40px 20px;
+      margin: 0 auto;
+      transition: opacity 1s ease, transform 1.5s ease;
+    }
+    
+    h1 {
+      font-family: 'Playfair Display', serif;
+      color: var(--primary);
+      margin-bottom: 10px;
+      font-size: 2.2rem;
+      transition: color 2s ease;
+      text-align: center;
+    }
+    
+    .dark-theme h1 {
+      color: var(--dark-text);
+    }
+    
+    .subtitle {
+      color: var(--accent);
+      text-align: center;
+      margin-bottom: 20px;
+      font-weight: 500;
+    }
+    
+    .dark-theme .subtitle {
+      color: var(--light-accent);
+    }
+    
+    .timer {
+      font-size: 1.1rem;
+      font-weight: 600;
+      padding: 8px 16px;
+      background-color: var(--primary);
+      color: white;
+      border-radius: 20px;
+      margin-bottom: 15px;
+      transition: opacity 1s ease;
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+    }
+    
+    .plate {
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle at center, #f5f5f5 0%, #e0e0e0 100%);
+      border-radius: 50%;
+      box-shadow: 
+        0 6px 25px var(--shadow),
+        0 10px 15px rgba(0, 0, 0, 0.1) inset;
+      position: relative;
+      overflow: hidden;
+      border: 8px solid #f0f0f0;
+      border-bottom-color: #d0d0d0;
+      border-top-color: #ffffff;
+    }
+
+    .plate::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 10%, transparent 10.01%);
+      background-size: 20px 20px;
+      opacity: 0.3;
+      pointer-events: none;
+    }
+
+    .plate-area {
+      position: relative;
+      width: 400px;
+      height: 400px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 20px;
+      transition: opacity 1s ease;
+    }
+
+    .plate-area::after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      left: 50%;
+      width: 80%;
+      height: 20px;
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 50%;
+      transform: translateX(-50%);
+      filter: blur(10px);
+      z-index: -1;
+    }
+    
+    .food-items {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 25px;
+      transition: opacity 1s ease;
+      max-width: 600px;
+    }
+    
+    .food-btn {
+      padding: 12px 18px;
+      border: none;
+      background-color: white;
+      color: var(--text);
+      border-radius: 30px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 3px 10px var(--shadow);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      z-index: 10;
+    }
+    
+    .food-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 14px var(--shadow);
+      background-color: var(--light-accent);
+      color: white;
+    }
+    
+    .food-btn:active {
+      transform: translateY(0);
+    }
+    
+    .finish-btn {
+      background-color: var(--secondary);
+      color: white;
+      padding: 14px 32px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-top: 10px;
+      border: none;
+      border-radius: 30px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px var(--shadow);
+      z-index: 10;
+      letter-spacing: 0.5px;
+    }
+    
+    .finish-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px var(--shadow);
+    }
+    
+    .finish-btn:active {
+      transform: translateY(0);
+    }
+    
+    .food-item {
+      position: absolute;
+      transform-origin: center;
+      transition: all 0.3s ease;
+      user-select: none;
+    }
+    
+    .results {
+      background-color: white;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 4px 25px var(--shadow);
+      text-align: center;
+      margin-top: 20px;
+      display: none;
+      transition: all 0.8s ease;
+      position: fixed;
+      z-index: 100;
+      top: 100%;
+      left: 50%;
+      transform: translate(-50%, 0);
+      width: 90%;
+      max-width: 500px;
+    }
+    
+    .results.visible {
+      top: 50%;
+      transform: translate(-50%, -50%);
+    }
+    
+    .results.alarming {
+      background-color: #f05d5e;
+      color: white;
+    }
+    
+    .stat {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: var(--secondary);
+      margin: 20px 0;
+      transition: color 2s ease;
+    }
+    
+    .results.alarming .stat {
+      color: white;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    }
+    
+    .dark-theme .stat {
+      color: var(--dark-accent);
+    }
+    
+    .reset-btn {
+      background-color: var(--primary);
+      color: white;
+      padding: 12px 22px;
+      font-size: 1rem;
+      border: none;
+      border-radius: 20px;
+      cursor: pointer;
+      margin-top: 15px;
+      transition: all 0.3s ease;
+      font-weight: 600;
+      z-index: 101;
+    }
+    
+    .reset-btn:hover {
+      opacity: 0.9;
+      transform: translateY(-2px);
+    }
+    
+    .slide-up {
+      transform: translateY(-100vh);
+    }
+    
+    .empty-page {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: var(--dark-background);
+      z-index: 50;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      opacity: 0;
+      transition: opacity 1s ease;
+      pointer-events: none;
+    }
+    
+    .empty-page.visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    
+    .restart-btn {
+      background-color: var(--dark-accent);
+      color: white;
+      padding: 15px 30px;
+      font-size: 1.2rem;
+      border: none;
+      border-radius: 30px;
+      cursor: pointer;
+      opacity: 0;
+      transition: opacity 1s ease, transform 0.3s ease;
+      z-index: 201;
+      font-weight: 600;
+      position: fixed;
+      left: 30px;
+      bottom: 30px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    }
+    
+    .restart-btn:hover {
+      transform: translateY(-3px);
+    }
+    
+    .restart-btn.visible {
+      opacity: 1;
+    }
+    
+    .tab-content {
+      display: none;
+      padding: 30px;
+      background-color: white;
+      border-radius: 15px;
+      box-shadow: 0 4px 15px var(--shadow);
+      margin-top: 20px;
+      max-width: 800px;
+      width: 90%;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 200;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+    
+    .tab-content.active {
+      display: block;
+    }
+    
+    .close-btn {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      background: none;
+      border: none;
+      font-size: 1.4rem;
+      cursor: pointer;
+      color: var(--text);
+      transition: color 0.3s ease;
+    }
+    
+    .close-btn:hover {
+      color: var(--secondary);
+    }
+    
+    .donation-options {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin-top: 20px;
+    }
+    
+    .donation-card {
+      background-color: var(--background);
+      padding: 20px;
+      border-radius: 10px;
+      text-align: center;
+      transition: transform 0.3s ease;
+    }
+    
+    .donation-card:hover {
+      transform: translateY(-5px);
+    }
+    
+    .donation-card img {
+      width: 80px;
+      height: 80px;
+      object-fit: cover;
+      border-radius: 50%;
+      margin-bottom: 10px;
+    }
+    
+    .donate-btn {
+      background-color: var(--primary);
+      color: white;
+      padding: 8px 16px;
+      border: none;
+      border-radius: 20px;
+      cursor: pointer;
+      margin-top: 10px;
+      transition: all 0.3s ease;
+      font-weight: 500;
+    }
+    
+    .donate-btn:hover {
+      background-color: var(--accent);
+    }
+    
+    .fact-list {
+      margin: 20px 0;
+    }
+    
+    .fact {
+      margin-bottom: 15px;
+      padding-left: 20px;
+      position: relative;
+    }
+    
+    .fact:before {
+      content: "•";
+      position: absolute;
+      left: 0;
+      color: var(--secondary);
+      font-weight: bold;
+    }
+    
+    .info-section {
+      margin-bottom: 30px;
+    }
+    
+    .info-section h3 {
+      color: var(--primary);
+      margin-bottom: 10px;
+    }
+    
+    .resource-link {
+      display: block;
+      margin: 10px 0;
+      color: var(--accent);
+      text-decoration: none;
+    }
+    
+    .resource-link:hover {
+      text-decoration: underline;
+    }
+    
+    .resource-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      margin-top: 20px;
+    }
+    
+    .resource-card {
+      background-color: var(--background);
+      padding: 20px;
+      border-radius: 10px;
+      transition: transform 0.3s ease;
+    }
+    
+    .resource-card:hover {
+      transform: translateY(-5px);
+    }
+    
+    .resource-card h4 {
+      color: var(--primary);
+      margin-bottom: 10px;
+    }
+    
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.7);
+      z-index: 150;
+      display: none;
+    }
+    
+    .overlay.active {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <div class="navbar">
+    <div class="logo">
+      <div class="logo-icon">🍽️</div>
+      <div class="logo-text">No Empty Plates</div>
+    </div>
+    <div class="tabs">
+      <a class="tab" data-tab="donate">
+        <span>❤️</span> Donate
+      </a>
+      <a class="tab" data-tab="info">
+        <span>ℹ️</span> Starvation Facts
+      </a>
+      <a class="tab" data-tab="learn">
+        <span>📚</span> Learn More
+      </a>
+    </div>
+  </div>
+  
+  <div class="container" id="game-container">
+    <h1>Build Your Perfect Meal</h1>
+    <p class="subtitle">Fill your plate with your heart's desire, there's no limit.</p>
+    <div class="timer">Time: 0 seconds</div>
+    
+    <div class="plate-area">
+      <div class="plate" id="plate"></div>
+    </div>
+    
+    <div class="food-items">
+      <button class="food-btn" data-food="rice">🍚 Rice</button>
+      <button class="food-btn" data-food="chicken">🍗 Chicken</button>
+      <button class="food-btn" data-food="salad">🥗 Salad</button>
+      <button class="food-btn" data-food="pasta">🍝 Pasta</button>
+      <button class="food-btn" data-food="fish">🐟 Fish</button>
+      <button class="food-btn" data-food="steak">🥩 Steak</button>
+      <button class="food-btn" data-food="potato">🥔 Potatoes</button>
+      <button class="food-btn" data-food="broccoli">🥦 Broccoli</button>
+      <button class="food-btn" data-food="tomato">🍅 Tomato</button>
+      <button class="food-btn" data-food="dessert">🍰 Dessert</button>
+    </div>
+    
+    <button class="finish-btn" id="finish-btn">Complete My Meal</button>
+  </div>
+  
+  <div class="results" id="results">
+    <h2>Meal Complete!</h2>
+    <p>You spent <span id="time-spent"></span> seconds creating your meal.</p>
+    <p class="stat" id="starvation-stat"></p>
+    <button class="reset-btn" id="reset-btn">Start Over</button>
+  </div>
+  
+  <div class="empty-page" id="empty-page">
+    <button class="restart-btn" id="restart-btn">Create a New Meal</button>
+  </div>
+  
+  <div class="overlay" id="overlay"></div>
+  
+  <!-- Tab content sections -->
+  <div class="tab-content" id="donate-content">
+    <button class="close-btn" data-close="donate-content">×</button>
+    <h2>Make a Difference Today</h2>
+    <p>Your contribution can help fight hunger and save lives. Choose from these trusted organizations:</p>
+    
+    <div class="donation-options">
+      <div class="donation-card">
+        <img src="/api/placeholder/80/80" alt="World Food Programme">
+        <h3>World Food Programme</h3>
+        <p>The world's largest humanitarian organization addressing hunger.</p>
+        <a href="https://www.wfp.org/support-us/donate" target="_blank"><button class="donate-btn">Donate</button></a>
+      </div>
+      
+      <div class="donation-card">
+        <img src="/api/placeholder/80/80" alt="Action Against Hunger">
+        <h3>Action Against Hunger</h3>
+        <p>Leading the global fight against hunger in 50 countries.</p>
+        <a href="https://www.actionagainsthunger.org/donate" target="_blank"><button class="donate-btn">Donate</button></a>
+      </div>
+      
+      <div class="donation-card">
+        <img src="/api/placeholder/80/80" alt="Feeding America">
+        <h3>Feeding America</h3>
+        <p>Network of food banks fighting hunger in the United States.</p>
+        <a href="https://www.feedingamerica.org/take-action/donate" target="_blank"><button class="donate-btn">Donate</button></a>
+      </div>
+    </div>
+  </div>
+  
+  <div class="tab-content" id="info-content">
+    <button class="close-btn" data-close="info-content">×</button>
+    <h2>Global Hunger Crisis: The Facts</h2>
+    <p>Hunger remains one of humanity's greatest challenges. Here are some facts about the global hunger crisis:</p>
+    
+    <div class="fact-list">
+      <div class="fact">Approximately 828 million people go to bed hungry every night.</div>
+      <div class="fact">A child dies from hunger-related causes every 10 seconds.</div>
+      <div class="fact">The world produces enough food to feed everyone, yet hunger persists due to poverty, conflict, and inequality.</div>
+      <div class="fact">Climate change is expected to push 132 million more people into poverty by 2030.</div>
+      <div class="fact">Food loss and waste amount to $1 trillion annually, while millions starve.</div>
+      <div class="fact">Malnutrition causes 45% of deaths in children under five – 3.1 million children each year.</div>
+      <div class="fact">Hunger kills more people than AIDS, malaria, and tuberculosis combined.</div>
+    </div>
+    
+    <div class="info-section">
+      <h3>Where Hunger Is Most Severe</h3>
+      <p>The highest rates of hunger are found in sub-Saharan Africa, South Asia, and parts of the Middle East affected by conflict. Countries experiencing active conflicts or climate disasters are particularly vulnerable.</p>
+    </div>
+    
+    <div class="info-section">
+      <h3>What Makes a Difference</h3>
+      <p>Studies show that targeted interventions like school feeding programs, agricultural support, and sustainable development initiatives can significantly reduce hunger in vulnerable communities.</p>
+    </div>
+  </div>
+  
+  <div class="tab-content" id="learn-content">
+    <button class="close-btn" data-close="learn-content">×</button>
+    <h2>Learn More About Hunger Solutions</h2>
+    <p>Education and awareness are crucial in fighting global hunger. Explore these resources to deepen your understanding and find ways to help:</p>
+    
+    <div class="resource-grid">
+      <div class="resource-card">
+        <h4>Understanding Food Systems</h4>
+        <p>Learn how food production, distribution, and consumption systems contribute to or alleviate hunger.</p>
+        <a href="https://www.fao.org/food-systems/en/" target="_blank" class="resource-link">Food Systems Overview →</a>
+      </div>
+      
+      <div class="resource-card">
+        <h4>Sustainable Agriculture</h4>
+        <p>Discover how sustainable farming practices can increase food security while protecting the environment.</p>
+        <a href="https://www.un.org/en/food-systems-summit/news/sustainable-agriculture-future" target="_blank" class="resource-link">Sustainable Farming Guide →</a>
+      </div>
+      
+      <div class="resource-card">
+        <h4>Food Waste Reduction</h4>
+        <p>Simple steps to reduce food waste at home, in restaurants, and throughout the supply chain.</p>
+        <a href="https://www.fao.org/platform-food-loss-waste/en/" target="_blank" class="resource-link">Waste Reduction Tips →</a>
+      </div>
+      
+      <div class="resource-card">
+        <h4>Community Action</h4>
+        <p>Start or join local initiatives to fight hunger in your community and beyond.</p>
+        <a href="https://www.actionagainsthunger.org/take-action/" target="_blank" class="resource-link">Community Action Toolkit →</a>
+      </div>
+    </div>
+    
+    <div class="info-section">
+      <h3>Documentaries & Books</h3>
+      <p>Deepen your understanding through these recommended documentaries and books about global hunger:</p>
+      <ul class="fact-list">
+        <li class="fact"><a href="https://www.magpictures.com/aplaceatthetable/" target="_blank" style="color: inherit; text-decoration: underline;">"A Place at the Table"</a> - Documentary exploring hunger in America</li>
+        <li class="fact"><a href="https://www.penguinrandomhouse.com/books/131050/waste-by-tristram-stuart/" target="_blank" style="color: inherit; text-decoration: underline;">"Waste: Uncovering the Global Food Scandal"</a> by Tristram Stuart</li>
+        <li class="fact"><a href="https://www.ivpress.com/the-end-of-hunger" target="_blank" style="color: inherit; text-decoration: underline;">"The End of Hunger"</a> by Jenny Eaton Dyer & Cathleen Falsani</li>
+        <li class="fact"><a href="https://www.publicaffairsbooks.com/titles/roger-thurow/enough/9781586485115/" target="_blank" style="color: inherit; text-decoration: underline;">"Enough: Why the World's Poorest Starve in an Age of Plenty"</a> by Roger Thurow</li>
+      </ul>
+    </div>
+  </div>
+  
+  <script>
+    // Food images and positions
+const foodItems = {
+  rice: { emoji: '🍚', size: 80, offsetX: [-100, 100], offsetY: [-100, 100] },
+  chicken: { emoji: '🍗', size: 60, offsetX: [-110, 110], offsetY: [-110, 110] },
+  salad: { emoji: '🥗', size: 70, offsetX: [-105, 105], offsetY: [-105, 105] },
+  pasta: { emoji: '🍝', size: 80, offsetX: [-100, 100], offsetY: [-100, 100] },
+  fish: { emoji: '🐟', size: 70, offsetX: [-105, 105], offsetY: [-105, 105] },
+  steak: { emoji: '🥩', size: 70, offsetX: [-105, 105], offsetY: [-105, 105] },
+  potato: { emoji: '🥔', size: 50, offsetX: [-115, 115], offsetY: [-115, 115] },
+  broccoli: { emoji: '🥦', size: 40, offsetX: [-120, 120], offsetY: [-120, 120] },
+  tomato: { emoji: '🍅', size: 40, offsetX: [-120, 120], offsetY: [-120, 120] },
+  dessert: { emoji: '🍰', size: 60, offsetX: [-110, 110], offsetY: [-110, 110] }
+};
+
+// DOM elements
+const plate = document.getElementById('plate');
+const finishBtn = document.getElementById('finish-btn');
+const resultsDiv = document.getElementById('results');
+const timeSpentSpan = document.getElementById('time-spent');
+const starvationStatSpan = document.getElementById('starvation-stat');
+const timerDisplay = document.querySelector('.timer');
+const resetBtn = document.getElementById('reset-btn');
+const restartBtn = document.getElementById('restart-btn');
+const overlay = document.getElementById('overlay');
+const tabs = document.querySelectorAll('.tab');
+const tabContents = document.querySelectorAll('.tab-content');
+const closeBtns = document.querySelectorAll('.close-btn');
+
+// Game state
+let startTime = Date.now();
+let timerInterval;
+let plateItems = [];
+let isAnimating = false;
+
+// Start timer
+function startTimer() {
+  if (!timerInterval) {
+    startTime = Date.now();
+    timerInterval = setInterval(updateTimer, 1000);
+  }
+}
+
+// Update timer display
+function updateTimer() {
+  const seconds = Math.floor((Date.now() - startTime) / 1000);
+  timerDisplay.textContent = `Time: ${seconds} seconds`;
+}
+
+// Add food to plate
+function addFoodToPlate(foodType) {
+  if (isAnimating) return;
+
+  const food = foodItems[foodType];
+
+  // Create food element
+  const foodElement = document.createElement('div');
+  foodElement.classList.add('food-item');
+  foodElement.style.fontSize = `${food.size}px`;
+  foodElement.textContent = food.emoji;
+
+  // Position food on plate
+  const offsetX = randomInRange(food.offsetX[0], food.offsetX[1]);
+  const offsetY = randomInRange(food.offsetY[0], food.offsetY[1]);
+  const rotation = randomInRange(-45, 45);
+
+  foodElement.style.transform = `translate(${offsetX}px, ${offsetY}px) rotate(${rotation}deg)`;
+  foodElement.style.left = '50%';
+  foodElement.style.top = '50%';
+  foodElement.style.marginLeft = `-${food.size / 2}px`;
+  foodElement.style.marginTop = `-${food.size / 2}px`;
+
+  plate.appendChild(foodElement);
+  plateItems.push(foodElement);
+
+  // Add animation
+  foodElement.style.opacity = '0';
+  foodElement.style.transform += ' scale(0.5)';
+
+  setTimeout(() => {
+    foodElement.style.opacity = '1';
+    foodElement.style.transform = `translate(${offsetX}px, ${offsetY}px) rotate(${rotation}deg) scale(1)`;
+  }, 10);
+
+  if (!timerInterval) {
+    startTimer();
+  }
+}
+
+// Random number within range
+function randomInRange(min, max) {
+  return Math.random() * (max - min) + min;
+}
+
+// Calculate starvation statistic
+function calculateStarvation(seconds) {
+  return Math.round(seconds * (25000 / 24 / 3600));
+}
+
+// Finish meal and show results
+// Modify the finishMeal function to change the theme
+function finishMeal() {
+  if (isAnimating) return;
+  isAnimating = true;
+
+  clearInterval(timerInterval);
+  const seconds = Math.floor((Date.now() - startTime) / 1000);
+
+  timeSpentSpan.textContent = seconds;
+  starvationStatSpan.textContent = `${calculateStarvation(seconds)} people died from starvation in the time you took`;
+
+  // Change theme to dark
+  document.body.classList.add('dark-theme');
+  
+  resultsDiv.style.display = 'block';
+  resultsDiv.classList.add('alarming');
+
+  // Change button text to "Learn More"
+  resetBtn.textContent = "Learn More";
+  // Change button function to open info tab instead of resetting
+  resetBtn.removeEventListener('click', resetGame);
+  resetBtn.addEventListener('click', openInfoTab);
+
+  setTimeout(() => {
+    resultsDiv.classList.add('visible');
+  }, 100);
+}
+
+// Function to open the info tab when "Learn More" is clicked
+function openInfoTab() {
+  // Hide results popup
+  resultsDiv.classList.remove('visible');
+  
+  setTimeout(() => {
+    resultsDiv.style.display = 'none';
+    
+    // Open the info tab
+    showTabContent('info');
+    
+    // Allow navigation between tabs
+    tabs.forEach(tab => {
+      tab.style.pointerEvents = 'auto';
+    });
+  }, 500);
+}
+
+// Reset game function should now restore original button behavior
+function resetGame() {
+  if (isAnimating) return;
+  isAnimating = true;
+
+  // Hide results
+  resultsDiv.classList.remove('visible');
+  setTimeout(() => {
+    resultsDiv.style.display = 'none';
+    resultsDiv.classList.remove('alarming');
+
+    // Clear the plate
+    while (plate.firstChild) {
+      plate.removeChild(plate.firstChild);
+    }
+
+    // Reset game state
+    plateItems = [];
+    clearInterval(timerInterval);
+    timerInterval = null;
+    timerDisplay.textContent = 'Time: 0 seconds';
+    
+    // Make sure the game container is visible again
+    document.getElementById('game-container').classList.remove('slide-up');
+    document.getElementById('empty-page').classList.remove('visible');
+    
+    // Reset the start time
+    startTime = Date.now();
+    
+    // Change theme back to light
+    document.body.classList.remove('dark-theme');
+
+    // Reset button text and behavior
+    resetBtn.textContent = "Start Over";
+    resetBtn.removeEventListener('click', openInfoTab);
+    resetBtn.addEventListener('click', resetGame);
+
+    // Reset animation state
+    isAnimating = false;
+  }, 500);
+}// Show tab content
+function showTabContent(tabId) {
+  tabContents.forEach(content => content.classList.remove('active'));
+  const targetContent = document.getElementById(`${tabId}-content`);
+  if (targetContent) {
+    targetContent.classList.add('active');
+    overlay.classList.add('active');
+  }
+}
+
+// Close tab content
+function closeTabContent(contentId) {
+  const content = document.getElementById(contentId);
+  if (content) {
+    content.classList.remove('active');
+    overlay.classList.remove('active');
+  }
+}
+
+// Set up event listeners
+function setupEventListeners() {
+  // Food buttons
+  document.querySelectorAll('.food-btn').forEach(button => {
+    button.addEventListener('click', () => {
+      const foodType = button.getAttribute('data-food');
+      addFoodToPlate(foodType);
+    });
+  });
+
+  // Finish button
+  finishBtn.addEventListener('click', finishMeal);
+
+  // Reset button
+  resetBtn.addEventListener('click', resetGame);
+
+  // Restart button
+  restartBtn.addEventListener('click', resetGame);
+
+  // Tabs
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      const tabId = tab.getAttribute('data-tab');
+      showTabContent(tabId);
+    });
+  });
+
+  // Close buttons
+  closeBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const contentId = btn.getAttribute('data-close');
+      closeTabContent(contentId);
+    });
+  });
+
+  // Overlay click to close tabs
+  overlay.addEventListener('click', () => {
+    tabContents.forEach(content => content.classList.remove('active'));
+    overlay.classList.remove('active');
+  });
+}
+
+// Initialize the game
+function initGame() {
+  setupEventListeners();
+}
+
+// Start the game
+initGame();
+  </script>
+</body>
+</html>
